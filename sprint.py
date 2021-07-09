@@ -6,14 +6,14 @@ import pandas as pd
 
 class Sprint:
     def __init__(
-            self, programmers_count, hours_per_point, sprint_start_date, sprint_end_date, pre_deployment_date,
+            self, programmers_count, hours_per_point, start_date, pre_deployment_date, end_date,
             support_percentage, pre_deployment_days, issues_df=None
     ):
         self.programmers_count = programmers_count
         self.hours_per_point = hours_per_point
-        self.sprint_start_date = self.cast_str_date(sprint_start_date)
-        self.sprint_end_date = self.cast_str_date(sprint_end_date)
+        self.start_date = self.cast_str_date(start_date)
         self.pre_deployment_date = self.cast_str_date(pre_deployment_date)
+        self.end_date = self.cast_str_date(end_date)
         self.support_percentage = support_percentage
         self.pre_deployment_days = pre_deployment_days
         self.issues_df = issues_df
@@ -76,7 +76,7 @@ class Sprint:
         return team_points_without_support
 
     def days_until_pre_deployment(self):
-        return self.get_active_days(self.sprint_start_date, self.pre_deployment_date, interval='[)')
+        return self.get_active_days(self.start_date, self.pre_deployment_date, interval='[)')
 
     def calculate_points_post_pre_deployment(self):
         active_days = self._get_days_post_pre_deployment()
@@ -91,10 +91,10 @@ class Sprint:
         pre_deployment_days = datetime.timedelta(days=self.pre_deployment_days)
         end_pre_deployment_date = self.pre_deployment_date + pre_deployment_days
 
-        return self.get_active_days(end_pre_deployment_date, self.sprint_end_date)
+        return self.get_active_days(end_pre_deployment_date, self.end_date)
 
     def calculate_all_sprint_active_days(self):
-        active_days = self.get_active_days(self.sprint_start_date, self.sprint_end_date)
+        active_days = self.get_active_days(self.start_date, self.end_date)
 
         return active_days
 
@@ -118,7 +118,7 @@ class Sprint:
         all_sprint_support_points = self.calculate_all_sprint_support_points()
 
         self.printmd(
-            f"### Sprint '{self.sprint_start_date}' - '{self.sprint_end_date}' "
+            f"### Sprint '{self.start_date}' - '{self.end_date}' "
             f"({active_days} días | {self.programmers_count} cracks | {self.hours_per_point} h/punto):\n"
             f" * Puntos hasta el pase (**ALTA** o más): **{points_until_pre_deployment}** puntos.\n"
             f" * Puntos después del pase (**NORMAL**): **{points_post_pre_deployment}** puntos.\n"
@@ -194,7 +194,7 @@ class Sprint:
         reference_y = list()
         cumulative_y = points_until_pre_deployment
 
-        current_date = self.sprint_start_date
+        current_date = self.start_date
         while current_date <= self.pre_deployment_date:
             x.append(current_date)
             reference_y.append(cumulative_y)
