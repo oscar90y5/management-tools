@@ -1,12 +1,12 @@
 from unittest import TestCase
 
-from data_mappers.sprint_data_mapper import SprintDataMapper
+from management_tools.data_mappers.sprint_data_mapper import SprintDataMapper
 
 
 class TestSprintDataMapper(TestCase):
     def setUp(self) -> None:
         self.sprint_data_mapper = SprintDataMapper()
-        self.sprint_data_mapper.SPRINT_RECORD_FILE_PATH = '../tests/test_sprint_record.txt'
+        self.sprint_data_mapper.SPRINT_RECORD_FILE_PATH = 'test_sprint_record.txt'
 
     def test_without_issues(self):
         sprint = self.sprint_data_mapper.get(name='test_without_issues')

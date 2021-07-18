@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from sprint import Sprint
-from tests.factories.sprint_factory import SprintFactory
+from management_tools.sprint import Sprint
+from management_tools.tests.factories.sprint_factory import SprintFactory
 
 
 class TestSprintFactory(TestCase):

@@ -2,7 +2,7 @@ from unittest import TestCase
 
 import pandas
 
-from tests.factories.sprint_factory import SprintFactory
+from management_tools.tests.factories.sprint_factory import SprintFactory
 
 from matplotlib import pyplot as plt
 from freezegun import freeze_time

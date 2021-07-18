@@ -3,7 +3,7 @@ import io
 import pandas
 import requests
 
-from sprint import Sprint
+from ..sprint import Sprint
 import json
 
 

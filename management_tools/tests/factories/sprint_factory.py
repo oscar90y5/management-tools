@@ -1,4 +1,4 @@
-from sprint import Sprint
+from management_tools.sprint import Sprint
 
 
 class SprintFactory:

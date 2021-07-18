@@ -2,7 +2,6 @@ import datetime
 
 from IPython.display import Markdown, display
 import pandas as pd
-from icecream import ic
 
 day_of_week_map = ['L', 'M', 'X', 'J', 'V', 'S', 'D']
 
