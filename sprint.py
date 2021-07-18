@@ -2,7 +2,9 @@ import datetime
 
 from IPython.display import Markdown, display
 import pandas as pd
+from icecream import ic
 
+day_of_week_map = ['L', 'M', 'X', 'J', 'V', 'S', 'D']
 
 class Sprint:
     def __init__(
@@ -180,40 +182,58 @@ class Sprint:
 
         return non_support_hours / self._get_non_support_points()
 
-    def plot_burndown(self, ax):
+    def _get_total_points(self):
+        return self.issues_df[self.issues_df['Prioridad'].isin(self.priorities_until_pre_deployment)]['Story points'].sum()
+
+    def plot_burndown(self, fig, ax):
         assert self.issues_df is not None
 
-        points_until_pre_deployment = self._get_points_until_pre_deploy()
+        total_points = self._get_total_points()
+
         active_days = self.days_until_pre_deployment()
 
-        points_per_day = points_until_pre_deployment / active_days
+        points_per_day = total_points / active_days
 
         one_day = datetime.timedelta(days=1)
 
         x = list()
         reference_y = list()
-        cumulative_y = points_until_pre_deployment
+        cumulative_y = total_points
 
         current_date = self.start_date
-        while current_date <= self.pre_deployment_date:
+        while current_date <= (self.end_date + datetime.timedelta(days=1)):
             x.append(current_date)
-            reference_y.append(cumulative_y)
-            if current_date.weekday() in self.active_days_index:
-                cumulative_y -= points_per_day
+            if current_date <= self.pre_deployment_date:
+                reference_y.append(cumulative_y)
+                if current_date.weekday() in self.active_days_index:
+                    cumulative_y -= points_per_day
+            else:
+                reference_y.append(0)
             current_date += one_day
 
         ax.plot(x, reference_y, color='k', linestyle='--', label="Objetivo")
 
-        grouped_tasks = self._get_tasks_until_pre_deploy().groupby(pd.Grouper(key='Cerrada', freq='d')).sum()
-        x = grouped_tasks.index
+        self._label_x_axis(ax, x)
 
-        y = self.patata(grouped_tasks['Story points'])
+        actual_x, actual_y = self._get_actual_x_y()
 
-        ax.plot(x, y, label="Realidad")
-        ax.fill_between(x, y, alpha=.5)
+        ax.plot(actual_x, actual_y, label="Realidad", marker='o')
+        ax.fill_between(actual_x, actual_y, alpha=.5)
 
-        print(points_until_pre_deployment)
-        print(grouped_tasks['Story points'].sum())
+        ## Mostramos la cuadricula.
+        ax.grid(True, axis='x')
+
+        ## Ocultamos el marco.
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+
+        ax.set_xlim(self.start_date, (self.end_date + datetime.timedelta(days=1)))
+        ax.set_ylim(0)
+
+        ax.legend()
+
+        fig.suptitle('Burndown Sprint actual')
+        ax.set_ylabel("Puntos restantes")
 
     def _get_points_until_pre_deploy(self):
         return self._get_tasks_until_pre_deploy()['Story points'].sum()
@@ -221,14 +241,35 @@ class Sprint:
     def _get_tasks_until_pre_deploy(self):
         return self.issues_df[self.issues_df['Prioridad'].isin(self.priorities_until_pre_deployment)]
 
-    def patata(self, day_grouped_solved_points):
-        points_until_pre_deployment = self._get_points_until_pre_deploy()
-        day_grouped_unsolved_points = list()
-        solved_points = 0
+    def _get_actual_x_y(self):
+        total_points = self._get_total_points()
 
-        for current_day_solved_points in day_grouped_solved_points:
-            solved_points += current_day_solved_points
-            current_day_unsolved_points = points_until_pre_deployment - solved_points
-            day_grouped_unsolved_points.append(current_day_unsolved_points)
+        grouped_tasks = self._get_tasks_until_pre_deploy().groupby(pd.Grouper(key='Cerrada', freq='d')).sum()
+        grouped_story_points = grouped_tasks['Story points']
 
-        return day_grouped_unsolved_points
+        x = list()
+        y = list()
+
+        remaining_points = total_points
+
+        current_date = self.start_date
+        while current_date <= (datetime.datetime.today() + datetime.timedelta(days=1)) and current_date <= (self.end_date + datetime.timedelta(days=1)):
+            x.append(current_date)
+            y.append(remaining_points)
+
+            if current_date in grouped_story_points.index:
+                remaining_points -= grouped_story_points.loc[current_date]
+
+            current_date += datetime.timedelta(days=1)
+
+        return x, y
+
+    def _label_x_axis(self, ax, x):
+        interval_centered_x = [date + datetime.timedelta(hours=12) for date in x]
+        str_x = [f'{day_of_week_map[date.weekday()]}' for date in x]
+
+        ax.set_xticks(x)
+        ax.set_xticklabels([])
+
+        ax.set_xticks(interval_centered_x, minor=True)
+        ax.set_xticklabels(str_x, minor=True)

@@ -1,0 +1,13 @@
+# Format: {
+#  <sprint_name>: {
+#    ('redmine_id': int),
+#    'start_date': 'dd/mm/yy',
+#    'pre_deployment_date': 'dd/mm/yy',
+#    'end_date': 'dd/mm/yy',
+#    'programmers_count': int,
+#    'hours_per_point': int,
+#    'support_percentage': int (base 1),
+#    'pre_deployment_days': int
+#  }
+#}
+
