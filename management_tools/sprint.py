@@ -243,8 +243,13 @@ class Sprint:
     def _get_actual_x_y(self):
         total_points = self._get_total_points()
 
-        grouped_tasks = self._get_tasks_until_pre_deploy().groupby(pd.Grouper(key='Cerrada', freq='d')).sum()
-        grouped_story_points = grouped_tasks['Story points']
+        grouped_story_points = None
+
+        try:
+            grouped_tasks = self._get_tasks_until_pre_deploy().groupby(pd.Grouper(key='Cerrada', freq='d')).sum()
+            grouped_story_points = grouped_tasks['Story points']
+        except AttributeError:
+            pass
 
         x = list()
         y = list()
@@ -256,7 +261,7 @@ class Sprint:
             x.append(current_date)
             y.append(remaining_points)
 
-            if current_date in grouped_story_points.index:
+            if grouped_story_points is not None and current_date in grouped_story_points.index:
                 remaining_points -= grouped_story_points.loc[current_date]
 
             current_date += datetime.timedelta(days=1)
