@@ -3,6 +3,8 @@ import requests
 import pandas
 import io
 
+from management_tools.data_mappers.sprint_data_mapper import SprintDataMapper
+
 
 class TestRedmineIssuesRequest(TestCase):
     def test_request(self):
@@ -18,7 +20,7 @@ class TestRedmineIssuesRequest(TestCase):
 
     def _make_request(self):
         url = "http://10.0.20.21/projects/rubik/issues.csv?utf8=%E2%9C%93&set_filter=1&f%5B%5D=agile_sprints&op%5Bagile_sprints%5D=%3D&v%5Bagile_sprints%5D%5B%5D=206&c%5B%5D=id&c%5B%5D=tracker&c%5B%5D=status&c%5B%5D=subject&c%5B%5D=assigned_to&c%5B%5D=story_points&c%5B%5D=spent_hours&c%5B%5D=closed_on&sort=id%3Adesc&c%5B%5D=all_inline&encoding=UTF-8"
-        headers = {'Cookie': 'autologin=fbedf9b9a07303a021a290f02f5294c60268dc23;'}
+        headers = {'Cookie': f'autologin={SprintDataMapper.AUTOLOGIN_COOKIE};'}
 
         response = requests.get(url, headers=headers)
 

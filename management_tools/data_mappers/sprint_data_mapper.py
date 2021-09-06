@@ -3,13 +3,15 @@ import io
 import pandas
 import requests
 
-from ..sprint import Sprint
 import json
+
+from management_tools.sprint import Sprint
 
 
 class SprintDataMapper:
     REDMINE_URL = '...'
     SPRINT_RECORD_FILE_PATH = '../sprints_record.txt'
+    AUTOLOGIN_COOKIE = '0e965f8e6cd5e7565c6aea6fbde64f0623d41698'
 
     def get(self, name: str) -> Sprint:
         with open(self.SPRINT_RECORD_FILE_PATH) as sprints_record_file:
@@ -46,7 +48,7 @@ class SprintDataMapper:
 
     def _request_issues(self, redmine_id):
         url = f"http://10.0.20.21/projects/rubik/issues.csv?utf8=%E2%9C%93&set_filter=1&f%5B%5D=agile_sprints&op%5Bagile_sprints%5D=%3D&v%5Bagile_sprints%5D%5B%5D={redmine_id}&c%5B%5D=id&c%5B%5D=tracker&c%5B%5D=status&c%5B%5D=subject&c%5B%5D=assigned_to&c%5B%5D=story_points&c%5B%5D=spent_hours&c%5B%5D=closed_on&sort=id%3Adesc&c%5B%5D=all_inline&encoding=UTF-8"
-        headers = {'Cookie': 'autologin=fbedf9b9a07303a021a290f02f5294c60268dc23;'}
+        headers = {'Cookie': f'autologin={self.AUTOLOGIN_COOKIE};'}
 
         response = requests.get(url, headers=headers)
 
