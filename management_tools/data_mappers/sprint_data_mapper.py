@@ -40,8 +40,6 @@ class SprintDataMapper:
 
         response = self._request_issues(redmine_id)
 
-        print(response.text)
-
         issues_df = pandas.read_csv(io.StringIO(response.text), sep=";")
 
         issues_df = self._preprocess_issues_df(issues_df)
