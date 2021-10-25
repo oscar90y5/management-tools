@@ -214,10 +214,36 @@ class Sprint:
 
         self._label_x_axis(ax, x)
 
-        actual_x, actual_y = self._get_actual_x_y()
+        points_on_progress_and_comments = self.issues_df[
+            self.issues_df['Prioridad'].isin(self.priorities_until_pre_deployment)
+            & self.issues_df['Estado'].isin(['En curso', 'Comentarios'])
+        ]['Story points'].sum()
 
-        ax.plot(actual_x, actual_y, label="Realidad", marker='o')
-        ax.fill_between(actual_x, actual_y, alpha=.5)
+        points_solved_and_in_revision = self.issues_df[
+            self.issues_df['Prioridad'].isin(self.priorities_until_pre_deployment)
+            & self.issues_df['Estado'].isin(['Resuelta', 'En revisiÃ³n'])
+        ]['Story points'].sum()
+
+        # Plot issues with status 'Nueva'.
+        new_issues_x, new_issues_y = self._get_new_issues_x_y()
+        new_issues_y[-1] -= (points_on_progress_and_comments + points_solved_and_in_revision)
+
+        ax.plot(new_issues_x, new_issues_y, label="Nuevas", marker='o')
+        ax.fill_between(new_issues_x, new_issues_y, alpha=.5)
+
+        # Plot issues with status 'En curso' and 'Comentarios'.
+        on_progress_and_comments_issues_y = new_issues_y.copy()
+        on_progress_and_comments_issues_y[-1] += points_on_progress_and_comments
+
+        ax.plot(new_issues_x, on_progress_and_comments_issues_y, label="En curso / Comentarios", marker='o')
+        ax.fill_between(new_issues_x, new_issues_y, on_progress_and_comments_issues_y, alpha=.5)
+
+        # Plot issues with status 'Resuelta' and 'En revisión'.
+        solved_and_in_revision_issues_y = on_progress_and_comments_issues_y.copy()
+        solved_and_in_revision_issues_y[-1] += points_solved_and_in_revision
+
+        ax.plot(new_issues_x, solved_and_in_revision_issues_y, label="En revisión / Resuelta", marker='o')
+        ax.fill_between(new_issues_x, on_progress_and_comments_issues_y, solved_and_in_revision_issues_y, alpha=.5)
 
         ## Mostramos la cuadricula.
         ax.grid(True, axis='x')
@@ -229,9 +255,8 @@ class Sprint:
         ax.set_xlim(self.start_date, (self.end_date + datetime.timedelta(days=1)))
         ax.set_ylim(0)
 
-        ax.legend()
+        ax.legend(framealpha=1)
 
-        fig.suptitle('Burndown Sprint actual')
         ax.set_ylabel("Puntos restantes")
 
     def _get_points_until_pre_deploy(self):
@@ -240,7 +265,7 @@ class Sprint:
     def _get_tasks_until_pre_deploy(self):
         return self.issues_df[self.issues_df['Prioridad'].isin(self.priorities_until_pre_deployment)]
 
-    def _get_actual_x_y(self):
+    def _get_new_issues_x_y(self):
         total_points = self._get_total_points()
 
         grouped_story_points = None
