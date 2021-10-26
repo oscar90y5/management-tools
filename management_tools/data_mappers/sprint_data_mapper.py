@@ -1,4 +1,5 @@
 import io
+from typing import List
 
 import pandas
 import requests
@@ -12,6 +13,19 @@ class SprintDataMapper:
     REDMINE_URL = '...'
     SPRINT_RECORD_FILE_PATH = '../sprints_record.txt'
     AUTOLOGIN_COOKIE = '0e965f8e6cd5e7565c6aea6fbde64f0623d41698'
+
+    def get_all(self) -> List[Sprint]:
+        sprints = list()
+
+        with open(self.SPRINT_RECORD_FILE_PATH) as sprints_record_file:
+            sprints_record = json.load(sprints_record_file)
+
+            for sprint_name, sprint_record_data in sprints_record.items():
+                sprints.append(
+                    self._build_sprint_from_record_data(sprint_record_data)
+                )
+
+        return sprints
 
     def get(self, name: str) -> Sprint:
         with open(self.SPRINT_RECORD_FILE_PATH) as sprints_record_file:
