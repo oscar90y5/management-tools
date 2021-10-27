@@ -132,11 +132,11 @@ class Sprint:
 
         support_hours = self._get_actual_support_hours()
 
-        support_percentage = self._calculate_support_percentage()
+        support_percentage = self.calculate_support_percentage()
 
         self.printmd(f"Horas de soporte realizadas: **{support_hours}h** (**{support_percentage}%**).")
 
-    def _calculate_support_percentage(self):
+    def calculate_support_percentage(self):
         active_days = self.calculate_all_sprint_active_days()
 
         all_team_hours = self.get_all_team_hours_from(active_days)
