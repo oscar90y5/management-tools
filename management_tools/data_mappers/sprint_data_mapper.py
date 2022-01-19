@@ -61,7 +61,7 @@ class SprintDataMapper:
         return issues_df
 
     def _request_issues(self, redmine_id):
-        url = f"http://10.0.20.21/projects/rubik/issues.csv?utf8=%E2%9C%93&set_filter=1&f%5B%5D=agile_sprints&op%5Bagile_sprints%5D=%3D&v%5Bagile_sprints%5D%5B%5D={redmine_id}&c%5B%5D=id&c%5B%5D=tracker&c%5B%5D=status&c%5B%5D=subject&c%5B%5D=assigned_to&c%5B%5D=story_points&c%5B%5D=spent_hours&c%5B%5D=closed_on&sort=id%3Adesc&c%5B%5D=all_inline&encoding=UTF-8"
+        url = f"http://10.0.20.21/projects/spinner/issues.csv?utf8=%E2%9C%93&set_filter=1&f%5B%5D=agile_sprints&op%5Bagile_sprints%5D=%3D&v%5Bagile_sprints%5D%5B%5D={redmine_id}&c%5B%5D=id&c%5B%5D=tracker&c%5B%5D=status&c%5B%5D=subject&c%5B%5D=assigned_to&c%5B%5D=story_points&c%5B%5D=spent_hours&c%5B%5D=closed_on&sort=id%3Adesc&c%5B%5D=all_inline&encoding=UTF-8"
         # headers = {'Cookie': f'autologin={self.AUTOLOGIN_COOKIE};'}
         headers = {'Cookie': '_redmine_session=QjRVb2NPN2dLTlBYNEF4MXBzMjBqT2ZtbFhrYjRPUDNVM1pwYkFFMFVOQmsyTjR0Z2VxdTVZWFVjR3JHTGRlM3QrdCs0WEhmckFmN215dFZlcHBxR1F2SXA1WXlkWVVsMDk2NFVhSnBNcUJxVUdxY0tibkpKbVFXaEp6UFkxUnZWZmc5WjZrUGpsUytSd0VnOFNoaVQyU1J5cTFQMU1mNFJ0WWZMcFZocC9jM2xISDlFYmtIbi9TSlgwZ1ZVQ2x4dkZmeHE1cDV1bm1PNDhDZE5oT0pueExueWkxL3NheDllL2RKYW9XUVV3WT0tLXRITC90dWY4Q2hFQjNFU1FJR2NNTEE9PQ%3D%3D--614c97ce6c3e468186694776891f22c700d6d7f8'}
 
