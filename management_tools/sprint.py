@@ -7,9 +7,10 @@ day_of_week_map = ['L', 'M', 'X', 'J', 'V', 'S', 'D']
 
 class Sprint:
     def __init__(
-            self, programmers_count, hours_per_point, start_date, pre_deployment_date, end_date,
+            self, name, programmers_count, hours_per_point, start_date, pre_deployment_date, end_date,
             support_percentage, pre_deployment_days, issues_df=None
     ):
+        self.name = name
         self.programmers_count = programmers_count
         self.hours_per_point = hours_per_point
         self.start_date = self.cast_str_date(start_date)
