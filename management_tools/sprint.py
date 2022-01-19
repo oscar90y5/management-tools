@@ -112,21 +112,35 @@ class Sprint:
     def calculate_all_sprint_support_points(self):
         return self.calculate_all_sprint_support_hours() / self.hours_per_point
 
-    def show_planning_variables(self):
+    def show_planning_variables(self, format='html'):
+        assert format in ('html', 'markdown'), "Los formatos disponibles son 'html' y 'markdown'."
         active_days = self.calculate_all_sprint_active_days()
         points_until_pre_deployment = self.calculate_estimated_points_until_pre_deployment()
         points_post_pre_deployment = self.calculate_points_post_pre_deployment()
         all_sprint_support_hours = self.calculate_all_sprint_support_hours()
         all_sprint_support_points = self.calculate_all_sprint_support_points()
 
-        self.printmd(
-            f"### Sprint '{self.start_date}' - '{self.end_date}' "
-            f"({active_days} días | {self.programmers_count} cracks | {self.hours_per_point} h/punto):\n"
-            f" * Puntos hasta el pase (**ALTA** o más): **{points_until_pre_deployment}** puntos.\n"
-            f" * Puntos después del pase (**NORMAL**): **{points_post_pre_deployment}** puntos.\n"
-            f" * Puntos si no soporte (**BAJA**): **{all_sprint_support_points}** puntos.\n"
-            f" * Tiempo **máximo soporte**: **{all_sprint_support_hours}**h.\n"
-        )
+        if format == 'html':
+            print(f'''
+<h2 style="margin-bottom: 4px">Sprint '{self.start_date}' - '{self.end_date}'</h2>
+({active_days} días | {self.programmers_count} cracks | {self.hours_per_point} h/punto):
+<ul style="margin-top: 6px">
+    <li>Puntos hasta el pase (<b>ALTA</b> o más): <b>{points_until_pre_deployment}</b> puntos.</li>
+    <li>Puntos después del pase (<b>NORMAL</b>): <b>{points_post_pre_deployment}</b> puntos.</li>
+    <li>Puntos si no soporte (<b>BAJA</b>): <b>{all_sprint_support_points}</b> puntos.</li>
+    <li>Tiempo <b>máximo soporte</b>: <b>{all_sprint_support_hours}</b>h.</li>
+</ul>
+            ''')
+
+        elif format == 'markdown':
+            self.printmd(
+                f"### Sprint '{self.start_date}' - '{self.end_date}' "
+                f"({active_days} días | {self.programmers_count} cracks | {self.hours_per_point} h/punto):\n"
+                f" * Puntos hasta el pase (**ALTA** o más): **{points_until_pre_deployment}** puntos.\n"
+                f" * Puntos después del pase (**NORMAL**): **{points_post_pre_deployment}** puntos.\n"
+                f" * Puntos si no soporte (**BAJA**): **{all_sprint_support_points}** puntos.\n"
+                f" * Tiempo **máximo soporte**: **{all_sprint_support_hours}**h.\n"
+            )
 
     def show_support_percentage(self):
         assert self.issues_df is not None
