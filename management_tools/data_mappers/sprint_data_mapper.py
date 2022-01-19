@@ -1,5 +1,5 @@
 import io
-from typing import List
+from typing import List, Optional
 
 import pandas
 import requests
@@ -22,7 +22,7 @@ class SprintDataMapper:
 
             for sprint_name, sprint_record_data in sprints_record.items():
                 sprints.append(
-                    self._build_sprint_from_record_data(sprint_record_data)
+                    self._build_sprint_from_record_data(name=sprint_name, sprint_record_data=sprint_record_data)
                 )
 
         return sprints
@@ -33,22 +33,22 @@ class SprintDataMapper:
 
             if name in sprints_record:
                 sprint_record_data = sprints_record[name]
-                sprint = self._build_sprint_from_record_data(sprint_record_data)
+                sprint = self._build_sprint_from_record_data(name=name, sprint_record_data=sprint_record_data)
 
                 return sprint
 
             else:
                 raise ValueError(f'There is not Sprint with name "{name}".')
 
-    def _build_sprint_from_record_data(self, sprint_record_data: dict) -> Sprint:
+    def _build_sprint_from_record_data(self, name: str, sprint_record_data: dict) -> Sprint:
         redmine_id = sprint_record_data.pop('redmine_id', None)
         issues_df = self._get_issues_df(redmine_id)
 
-        sprint = Sprint(issues_df=issues_df, **sprint_record_data)
+        sprint = Sprint(name=name, issues_df=issues_df, **sprint_record_data)
 
         return sprint
 
-    def _get_issues_df(self, redmine_id: int) -> pandas.DataFrame:
+    def _get_issues_df(self, redmine_id: int) -> Optional[pandas.DataFrame]:
         if redmine_id is None:
             return None
 
