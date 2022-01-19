@@ -9,7 +9,7 @@
     "pre_deployment_days": 2
   },
   "test_with_issues": {
-    "redmine_id": 203,
+    "redmine_id": 266,
     "start_date": "12/7/21",
     "pre_deployment_date": "21/7/21",
     "end_date": "23/7/21",
